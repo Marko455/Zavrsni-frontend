@@ -7,12 +7,13 @@
         <p class="property-price">${{ property.price }}</p>
         <p class="property-description">{{ property.description }}</p>
         <p class="property-image">{{ property.image }}</p>
-        <button class="btn-details" @click="viewDetails">Vise detalja</button>
+        <button v-if="userState.loggedInUser" class="btn-details" @click="viewDetails">Vise detalja</button>
       </div>
     </div>
   </template>
   
   <script>
+  import { userState } from "@/store/user";
   export default {
     name: "PropertyCard",
     props: {
@@ -20,6 +21,10 @@
         type: Object,
         required: true,
       },
+    },
+    setup() {
+      userState.checkUser();
+      return { userState };
     },
     methods: {
       viewDetails() {

@@ -1,8 +1,12 @@
 <template>
   <div class="home-container">
-    <h1>Dobrodosli na RealEstate</h1>
-    <p>Vase rjesenje na jednom mjestu za pronalazenje kuce iz snova.</p>
-    <p>Istrazite nase popise i zapocnite svoje putovanje vec danas!</p>
+    <div class="hero-section">
+      <div class="hero-text">
+        <h1>Dobrodošli na RealEstate</h1>
+        <p>Vaše rješenje na jednom mjestu za pronalazak kuće iz snova.</p>
+        <p>Istražite naše popise i započnite svoje putovanje već danas!</p>
+      </div>
+    </div>
 
     <!-- Lista nekretnina -->
     <div v-if="filteredProperties.length" class="property-list">
@@ -12,19 +16,9 @@
       <p>Nema rezultata pretrage...</p>
     </div>
 
-    <!-- Chatbot Input Field -->
-    <div class="chatbot-container">
-      <input
-        type="text"
-        placeholder="Postavite pitanje o nekretninama..."
-        class="chatbot-input"
-      />
-      <button class="chatbot-send-btn">➤</button>
-    </div>
-
     <div class="sell-property-btn">
       <router-link to="/sell-property">
-        <button class="btn-sell">Prodajte nekretninu</button>
+        <button v-if="userState.loggedInUser" class="btn-sell">Prodajte nekretninu</button>
       </router-link>
     </div>
   </div>
@@ -33,7 +27,7 @@
 <script>
 import PropertyCard from '../components/PropertyCard.vue';
 import axios from 'axios';
-
+import { userState } from "@/store/user";
 export default {
   name: "Home",
   components: {
@@ -43,6 +37,10 @@ export default {
     return {
       properties: [],
     };
+  },
+  setup() {
+    userState.checkUser();
+    return { userState };
   },
   computed: {
     filteredProperties() {
@@ -65,10 +63,10 @@ export default {
   methods: {
     async fetchProperties() {
       try {
-        const response = await axios.get('http://localhost:8000/properties');
+        const response = await axios.get('http://localhost:8000/properties/');
         this.properties = response.data;
       } catch (error) {
-        console.error("Error fetching properties:", error);
+        console.error("Pogreška dohvaćanja nekretnina:", error);
       }
     }
   }
@@ -77,51 +75,45 @@ export default {
 
 <style scoped>
 .home-container {
-  padding: 1rem;
+  padding: 0;
   text-align: center;
+}
+
+.hero-section {
+  width: 100%;
+  height: 60vh;
+  background-image: url('@/assets/heroImage.jpg');
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-text {
+  color: white;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  max-width: 80%;
+}
+
+.hero-text h1 {
+  margin: 0;
+  font-size: 2.5rem;
+}
+
+.hero-text p {
+  font-size: 1.2rem;
 }
 
 .property-list {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-}
-
-.chatbot-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 2rem;
-  gap: 0.5rem;
-}
-
-.chatbot-input {
-  width: 60%;
-  padding: 0.8rem;
-  font-size: 1rem;
-  border: 2px solid #ddd;
-  border-radius: 5px;
-  outline: none;
-  transition: border-color 0.3s ease;
-}
-
-.chatbot-input:focus {
-  border-color: #42b883;
-}
-
-.chatbot-send-btn {
-  padding: 0.8rem 1.2rem;
-  font-size: 1.2rem;
-  color: white;
-  background-color: #42b883;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.chatbot-send-btn:hover {
-  background-color: #35495e;
+  padding: 1rem;
 }
 
 .sell-property-btn {

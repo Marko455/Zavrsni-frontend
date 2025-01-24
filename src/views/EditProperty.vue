@@ -1,34 +1,34 @@
 <template>
     <div class="edit-property-container">
-      <h2>Edit Property</h2>
+      <h2>Uređivanje nekretnine</h2>
       <form @submit.prevent="submitForm">
   
         <div class="form-group">
-          <label for="title">Property Title</label>
+          <label for="title">Naziv nekretnine</label>
           <input type="text" id="title" v-model="property.title" required />
         </div>
   
         <div class="form-group">
-          <label for="location">Location</label>
+          <label for="location">Lokacija</label>
           <input type="text" id="location" v-model="property.location" required />
         </div>
   
         <div class="form-group">
-          <label for="price">Price ($)</label>
+          <label for="price">Cijena ($)</label>
           <input type="number" id="price" v-model="property.price" required />
         </div>
   
         <div class="form-group">
-          <label for="description">Description</label>
+          <label for="description">Opis</label>
           <textarea id="description" v-model="property.description" required></textarea>
         </div>
   
         <div class="form-group">
-          <label for="image">Image URL</label>
+          <label for="image">URL slike</label>
           <input type="text" id="image" v-model="property.image" required />
         </div>
   
-        <button type="submit" class="btn-submit">Save Changes</button>
+        <button type="submit" class="btn-submit">Spremi promjene</button>
       </form>
     </div>
   </template>
@@ -53,17 +53,17 @@
           const response = await axios.get(`http://localhost:8000/properties/${id}`);
           this.property = response.data;
         } catch (error) {
-          console.error("Error fetching property details:", error);
+          console.error("Pogreska dohvacanja detalja nekretnine:", error);
         }
       },
       async submitForm() {
         try {
           const response = await axios.put(`http://localhost:8000/properties/${this.property.id}`, this.property);
-          alert(`Property titled "${this.property.title}" has been updated.`);
+          alert(`Nekretnina nazvana "${this.property.title}" je azurirana.`);
           this.$router.push(`/properties/${this.property.id}`);
         } catch (error) {
-          console.error("Error updating property:", error);
-          alert("There was an error updating the property.");
+          console.error("Pogreska azuriranja nekretnine:", error);
+          alert("Pojavila se pogreska u azuriranju nekretnine.");
         }
       },
     },

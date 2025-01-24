@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <div class="login-form">
-      <h2>Prijavite se na racun</h2>
+      <h2>Prijavite se na račun</h2>
       <form @submit.prevent="loginUser">
         <div class="form-group">
           <label for="email">Email</label>
@@ -13,11 +13,21 @@
           <input v-model="password" type="password" id="password" placeholder="Unesite vasu lozinku" />
         </div>
 
+        <div class="form-group">
+          <label>Odaberite tip računa:</label>
+          <div>
+            <input type="radio" id="buyer" value="buyer" v-model="role" />
+            <label for="buyer">Kupac</label>
+            <input type="radio" id="seller" value="seller" v-model="role" />
+            <label for="seller">Prodavac</label>
+          </div>
+        </div>
+
         <button type="submit" class="btn-login">Prijava</button>
       </form>
 
       <p class="register-link">
-        <p1 class="p1">Nemate racun?</p1> <router-link to="/register">Registriraj se ovdje</router-link>
+        <span class="p1">Nemate racun?</span> <router-link to="/register">Registriraj se ovdje</router-link>
       </p>
     </div>
   </div>
@@ -32,29 +42,38 @@ export default {
   data() {
     return {
       email: "",
-      password: ""
+      password: "",
+      role: ""
     };
   },
   methods: {
     async loginUser(){
-    try {
-      const response = await axios.post("http://127.0.0.1:8000/login/", {
-        email: this.email,
-        password: this.password,
-      });
-
-      const user = response.data.user;
-      localStorage.setItem("user", JSON.stringify(user));
-
-      this.$emit('user-logged-in');
-      this.$router.push("/");
-      } catch (error) {
-      console.error("Login failed:", error);
+      if (!this.role) {
+        alert("Molimo vas izaberite ulogu.");
+        return;
       }
-    },
+      
+      try {
+        const endpoint = this.role === 'buyer' ? '/login_buyer/' : '/login_seller/';
+        
+        const response = await axios.post(`http://127.0.0.1:8000${endpoint}`, {
+          email: this.email,
+          password: this.password,
+        });
+
+        const user = response.data.user;
+        localStorage.setItem("user", JSON.stringify(user));
+
+        this.$emit('user-logged-in');
+        this.$router.push("/");
+      } catch (error) {
+        alert("Prijava neuspijesna: " + (error.response?.data?.detail || error.message));
+      }
+    }
   }
 };
 </script>
+
 
 <style scoped>
 .login-container {
@@ -62,11 +81,11 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f5f5f5;
+  background-color: #28b1cc;
 }
 
 .login-form {
-  background-color: white;
+  background-color: rgb(34, 151, 186);
   padding: 40px;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);

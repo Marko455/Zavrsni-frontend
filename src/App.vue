@@ -1,46 +1,50 @@
 <template>
   <div id="app" @user-logged-in="checkUser">
     <nav class="navbar">
-      <div class="logo">Zavrsni rad</div>
+      <div class="logo">Završni rad</div>
       <ul class="nav-links">
         <li><router-link to="/">Home</router-link></li>
 
         <li v-if="userState.loggedInUser">
-          <span class="welcome-message">Dobrodosli, {{ userState.loggedInUser }}</span>
+          <span class="welcome-message">Dobrodošli, {{ userState.loggedInUser.user }}</span>
         </li>
         <li v-if="userState.loggedInUser">
           <button class="logout-btn" @click="logout">Odjava</button>
         </li>
-
-        <li v-else><router-link to="/register">Registracija</router-link></li>
-        <li><router-link to="/login">Prijava</router-link></li>
-        <li><router-link to="#">Kontakt</router-link></li>
+        <div v-else>
+          <li><router-link to="/register">Registracija</router-link></li>
+          <li><router-link to="/login">Prijava</router-link></li>
+        </div>
+        <li><router-link to="/agents">Agenti</router-link></li>
       </ul>
 
       <!-- Trazilica -->
       <div class="search-bar">
         <select v-model="filterType">
           <option value="title">Nazivu</option>
-          <option value="seller">Prodavacu</option>
+          <option value="seller">Prodavaču</option>
           <option value="location">Lokaciji</option>
         </select>
 
         <input type="text" v-model="searchQuery" placeholder="Pretrazi..." />
-        <button class="search-btn" @click="applySearch">Pretrazi</button>
+        <button class="search-btn" @click="applySearch">Pretraži</button>
       </div>
     </nav>
 
     <router-view />
-
+    <Chatbot />
   </div>
 </template>
 
 <script>
 import { watchEffect } from "vue";
 import { userState } from "@/store/user";
-
+import Chatbot from './components/Chatbot.vue';
 export default {
   name: "App",
+  components: {
+    Chatbot
+  },
   data() {
     return {
       searchQuery: "",
@@ -50,7 +54,7 @@ export default {
   setup() {
     userState.checkUser();
     watchEffect(() => {
-      console.log("User state changed:", userState.loggedInUser);
+      console.log("Stanje korisnika promjenjeno:", userState.loggedInUser);
     });
     return { userState };
   },
@@ -74,7 +78,6 @@ export default {
 </script>
 
 <style scoped>
-/* Navbar styling */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -129,7 +132,6 @@ export default {
   background-color: #d32f2f;
 }
 
-/* Search Bar Styling */
 .search-bar {
   display: flex;
   align-items: center;
@@ -158,7 +160,6 @@ export default {
   background-color: #fbc02d;
 }
 
-/* Footer Styling */
 .footer {
   text-align: center;
   background-color: #3f51b5;
@@ -174,7 +175,6 @@ export default {
   margin: 0;
 }
 
-/* Media Queries */
 @media (max-width: 768px) {
   .navbar {
     flex-direction: column;

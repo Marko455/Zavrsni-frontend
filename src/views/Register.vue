@@ -23,11 +23,21 @@
           <input type="password" v-model="confirmPassword" id="confirm-password" placeholder="Potvrdite lozinku" />
         </div>
 
+        <div class="form-group">
+          <label>Odaberite tip računa:</label>
+          <div>
+            <input type="radio" id="buyer" value="buyer" v-model="role" />
+            <label for="buyer">Kupac</label>
+            <input type="radio" id="seller" value="seller" v-model="role" />
+            <label for="seller">Prodavac</label>
+          </div>
+        </div>
+
         <button type="submit" class="btn-register">Registriraj se</button>
       </form>
 
       <p class="login-link">
-        <p1 class="p1">Vec imate racun? </p1><router-link to="/login">Prijavi se</router-link>
+        <span class="p1">Vec imate račun? </span><router-link to="/login">Prijavi se</router-link>
       </p>
     </div>
   </div>
@@ -43,26 +53,35 @@ export default {
       fullname: '',
       email: '',
       password: '',
-      confirmPassword: ''
+      confirmPassword: '',
+      role: ''
     };
   },
   methods: {
     async registerUser() {
       if (this.password !== this.confirmPassword) {
-        alert('Passwords do not match!');
+        alert('Lozinka se ne podudara!');
+        return;
+      }
+      
+      if (!this.role) {
+        alert('Molimo vas izaberite ulogu.');
         return;
       }
 
       try {
-        const response = await axios.post('http://localhost:8000/users/', {
+        const endpoint = this.role === 'buyer' ? '/buyers/' : '/sellers/';
+        
+        const response = await axios.post(`http://localhost:8000${endpoint}`, {
           name: this.fullname,
           email: this.email,
           password: this.password
         });
-        alert('Registration successful!');
+        
+        alert('Registracija uspijesna!');
         this.$router.push('/login');
       } catch (error) {
-        alert('Error registering user: ' + error.response.data.detail);
+        alert('Pogreska registracija korisnika: ' + (error.response?.data?.detail || error.message));
       }
     }
   }
@@ -75,11 +94,11 @@ export default {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: #f5f5f5;
+  background-color: #3297d6;
 }
 
 .register-form {
-  background-color: white;
+  background-color: rgb(39, 136, 205);
   padding: 40px;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
