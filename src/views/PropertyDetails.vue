@@ -2,7 +2,7 @@
   <div class="property-details-container">
     <img :src="property.image" alt="Property Image" class="property-image" />
     <div class="property-info">
-      <!-- Display property details -->
+
       <h2>{{ property.title }}</h2>
       <p><strong>Lokacija:</strong> {{ property.location }}</p>
       <p><strong>Cijena:</strong> ${{ property.price }}</p>
@@ -26,7 +26,7 @@
       <router-link to="/">
         <button class="btn-back">Vrati se na početnu</button>
       </router-link>
-          <!-- Modal -->
+
       <div v-if="showRequestModal" class="modal-overlay">
         <div class="modal">
           <h3>Zatraži obilazak kuće</h3>
@@ -101,12 +101,21 @@ export default {
       this.showRequestModal = false;
     },
     requestVisit() {
-      if (this.visitDateTime) {
-        alert(`Zatražili ste obilazak za ${this.visitDateTime}`);
-        this.showRequestModal = false;
-        // You can send the request to the server here using Axios if needed
-        // Example:
-        // axios.post("http://localhost:8000/visit-request", { propertyId: this.property.id, visitDateTime: this.visitDateTime });
+        if (this.visitDateTime) {
+        const payload = {
+          property_id: this.property.id,
+          visit_date_time: this.visitDateTime,
+        };
+
+        axios.post(`http://localhost:8000/properties/${this.property.id}/schedule-tour`, payload)
+          .then(response => {
+            alert(`Obilazak uspješno zatražen za ${this.visitDateTime}`);
+          this.showRequestModal = false;
+          })
+          .catch(error => {
+            console.error("Greška prilikom slanja zahtjeva za obilazak:", error);
+            alert("Došlo je do greške. Molimo pokušajte ponovno.");
+          });
       } else {
         alert("Molimo odaberite datum i vrijeme.");
       }
