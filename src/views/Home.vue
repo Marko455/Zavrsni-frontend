@@ -18,7 +18,7 @@
 
     <div class="sell-property-btn">
       <router-link to="/sell-property">
-        <button v-if="userState.loggedInUser" class="btn-sell">Prodajte nekretninu</button>
+        <button v-if="userState.loggedInUser && userState.loggedInUser.role !== 'buyer'" class="btn-sell">Prodajte nekretninu</button>
       </router-link>
     </div>
   </div>

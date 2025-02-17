@@ -27,7 +27,7 @@
       </form>
 
       <p class="register-link">
-        <span class="p1">Nemate racun?</span> <router-link to="/register">Registriraj se ovdje</router-link>
+        <span class="p1">Nemate račun?</span> <router-link to="/register">Registriraj se ovdje</router-link>
       </p>
     </div>
   </div>
@@ -43,7 +43,7 @@ export default {
     return {
       email: "",
       password: "",
-      role: ""
+      role: "",
     };
   },
   methods: {
@@ -56,12 +56,20 @@ export default {
       try {
         const endpoint = this.role === 'buyer' ? '/login_buyer/' : '/login_seller/';
         
-        const response = await axios.post(`http://127.0.0.1:8000${endpoint}`, {
+        const response = await axios.post(`http://localhost:8000${endpoint}`, {
           email: this.email,
           password: this.password,
         });
-
-        const user = response.data.user;
+        console.log("Login Response:", response.data);
+        const user = {
+          id: response.data.id,
+          name: response.data.name,
+          email: response.data.email,
+          role: response.data.role,
+        }
+        console.log("response.data.user: ", user)
+        userState.setUser(user); 
+        console.log("User after login:", userState.loggedInUser);
         localStorage.setItem("user", JSON.stringify(user));
 
         this.$emit('user-logged-in');

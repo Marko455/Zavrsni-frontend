@@ -22,14 +22,14 @@
     <div class="property-actions">
       <button class="btn-buy" @click="buyProperty">Kupi nekretninu</button>
       <button class="btn-buy" @click="openRequestModal">Zatraži obilazak kuce</button>
-      <button class="btn-edit" @click="goToEditPage">Uredi nekretninu</button>
+      <button v-if="userState.loggedInUser && userState.loggedInUser.role !== 'buyer' && userState.loggedInUser.email == property.contact" class="btn-edit" @click="goToEditPage">Uredi nekretninu</button>
       <router-link to="/">
         <button class="btn-back">Vrati se na početnu</button>
       </router-link>
 
       <div v-if="showRequestModal" class="modal-overlay">
         <div class="modal">
-          <h3>Zatraži obilazak kuće</h3>
+          <h3>Zatraži obilazak nekretnine</h3>
           <label for="visit-date">Odaberi datum i vrijeme:</label>
           <input type="datetime-local" id="visit-date" v-model="visitDateTime" />
           <div class="modal-actions">
@@ -45,7 +45,7 @@
 <script>
 import axios from "axios";
 import mapboxgl from "mapbox-gl";
-
+import { userState } from "@/store/user.js";
 mapboxgl.accessToken = 'pk.eyJ1IjoibWFya280NTUiLCJhIjoiY20zNzNkdGY3MGJodDJxcjY2b2lpcTlubSJ9.TZ2ssTeRpCBui-6CK3jQXg';
 
 export default {
@@ -59,6 +59,11 @@ export default {
       visitDateTime: "",
     };
   },
+
+  setup() {
+    userState.checkUser();
+    return { userState };
+  }, 
   async created() {
     const propertyId = this.$route.params.id;
     await this.fetchPropertyDetails(propertyId);
@@ -105,9 +110,11 @@ export default {
         const payload = {
           property_id: this.property.id,
           visit_date_time: this.visitDateTime,
+          user_id: this.userState.loggedInUser.id,
+          user_email: this.userState.loggedInUser.email,
         };
 
-        axios.post(`http://localhost:8000/properties/${this.property.id}/schedule-tour`, payload)
+        axios.post(`http://localhost:8000/schedule_tour/`, payload)
           .then(response => {
             alert(`Obilazak uspješno zatražen za ${this.visitDateTime}`);
           this.showRequestModal = false;
@@ -120,6 +127,31 @@ export default {
         alert("Molimo odaberite datum i vrijeme.");
       }
     },
+    buyProperty() {
+     const payload = {
+        title: this.property.title,
+        location: this.property.location,
+        price: this.property.price,
+        description: this.property.description,
+        seller: this.property.seller,
+        contact: this.property.contact,
+        property_type: this.property.property_type,
+        parking_space: this.property.parking_space,
+        sq_ft: this.property.sq_ft,
+        rooms: this.property.rooms,
+        bathrooms: this.property.bathrooms,
+        bedrooms: this.property.bedrooms,
+      };
+
+      axios.post("http://localhost:8000/buy_property/", payload)
+        .then(response => {
+        alert(`Hvala Vam na izboru nekretnine: ${response.data.title}, jedan od naših agenata će Vam se javiti ubrzo. `);
+      })
+      .catch(error => {
+        console.error("Greška prilikom kupnje nekretnine:", error);
+        alert("Došlo je do greške pri kupnji. Molimo pokušajte ponovno.");
+      });
+    }
   
   },
 };

@@ -45,7 +45,7 @@
       </div>
 
       <div class="form-group">
-        <label for="contact">Kontakt</label>
+        <label for="contact">Kontaktni email</label>
         <input type="text" id="contact" v-model="property.contact" required />
       </div>
 

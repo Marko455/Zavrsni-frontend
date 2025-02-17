@@ -7,7 +7,7 @@
         <p class="property-price">${{ property.price }}</p>
         <p class="property-description">{{ property.description }}</p>
         <p class="property-image">{{ property.image }}</p>
-        <button v-if="userState.loggedInUser" class="btn-details" @click="viewDetails">Vise detalja</button>
+        <button v-if="userState.loggedInUser" class="btn-details" @click="viewDetails">Više detalja</button>
       </div>
     </div>
   </template>

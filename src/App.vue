@@ -6,8 +6,9 @@
         <li><router-link to="/">Home</router-link></li>
 
         <li v-if="userState.loggedInUser">
-          <span class="welcome-message">Dobrodošli, {{ userState.loggedInUser.user }}</span>
+          <span class="welcome-message">Dobrodošli, {{ userState.loggedInUser.name }}</span>
         </li>
+
         <li v-if="userState.loggedInUser">
           <button class="logout-btn" @click="logout">Odjava</button>
         </li>
@@ -54,14 +55,11 @@ export default {
   setup() {
     userState.checkUser();
     watchEffect(() => {
-      console.log("Stanje korisnika promjenjeno:", userState.loggedInUser);
+      console.log("Stanje korisnika promjenjeno:", userState.loggedInUser); 
     });
     return { userState };
   },
   methods: {
-    checkUser() {
-      userState.checkUser();
-    },
     logout() {
       userState.clearUser();
       this.$router.push("/login");
