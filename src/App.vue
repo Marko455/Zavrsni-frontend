@@ -194,4 +194,7 @@ export default {
     justify-content: space-between;
   }
 }
+#app {
+  background: linear-gradient(to right, #2867ae, #50E3C2);
+}
 </style>

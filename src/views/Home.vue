@@ -75,8 +75,12 @@ export default {
 
 <style scoped>
 .home-container {
-  padding: 0;
-  text-align: center;
+  background: linear-gradient(to right, #2768b1, #50E3C2);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .hero-section {
